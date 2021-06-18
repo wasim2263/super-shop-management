@@ -1,0 +1,123 @@
+{% extends 'product/base.html' %}
+
+{% block extracss %}
+    <style>
+        label {
+            text-align: right;
+            display: block;
+            margin: 5px;
+            padding-bottom: 4px;
+            padding-left: 10px;
+        }
+
+        .admin-search {
+            border: 1px solid #c2cad8;
+            height: 32px;
+
+        }
+
+        .dateinput.form-control {
+            width: 80%;
+        }
+    </style>
+{% endblock extracss %}
+{% block content %}
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <div class="header-right">
+                        <form action="" class="search nav-form">
+                            <div class="row">
+                                <div class="col-sm-6">
+
+                                    <div class="input-group input-search">
+                                        <input type="text" class="form-control" name="product_name"
+                                               value="{{ request.GET.product_name }}"
+                                               placeholder="Search Product Name...">
+
+                                        <span class="input-group-btn">
+								<button class="btn btn-default" type="submit">Search</button>
+							</span>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+<a class="btn btn-primary" href="{% url 'product:product-add' %}">Add New Product</a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-center g-mb-20">
+        <div class="col-md-12">
+            <!-- Table Striped Rows -->
+            <div class="table-responsive">
+                <h4>Product List</h4>
+
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Unit Price</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for producct in products %}
+                        <tr>
+                            <td>{{ producct.code }}</td>
+                            <td>{{ producct.name }}</td>
+                            <td>{{ producct.category }}</td>
+                            <td>{{ producct.unite_price }} {{ producct.unit_type }}</td>
+                            <td>{{ producct.stock }}</td>
+                            <td><a class="btn btn-primary" href="{% url 'product:product-edit' producct.id %}">Edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+
+                </table>
+            </div>
+
+            {% if products.has_other_pages %}
+
+                {% include 'basic/pagination.html' with objects=products %}
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}
+
+{% block extrajs %}
+    <script>
+        {#$(document).on('ready', function () {#}
+        {##}
+        {#  $('#time_range_select').selectpicker();#}
+        {#  $('#time_range_select').on('change', function (e) {#}
+        {#    console.log(this.value,#}
+        {#      this.options[this.selectedIndex].value,#}
+        {#      $(this).find("option:selected").val(),);#}
+        {#    $(this).closest('form').submit();#}
+        {##}
+        {#  });#}
+        {#  $('#id_from_date').datetimepicker({#}
+        {#    format: 'YYYY-MM-DD'#}
+        {#  });#}
+        {#  $('#id_to_date').datetimepicker({#}
+        {#    format: 'YYYY-MM-DD'#}
+        {#  });#}
+        {##}
+        {#})
+        ;
+        #}
+
+    </script>
+{% endblock extrajs %}
+

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{#{% load staticfiles %}#}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Update Profile</h4>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <form class="form-horizontal" method="post" action="">
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                    <div class="control-group">
+                                        <div class="controls">
+                                            <button type="submit" class="btn">Update</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

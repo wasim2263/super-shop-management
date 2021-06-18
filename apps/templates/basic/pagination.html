@@ -1,0 +1,48 @@
+{% load query_parameters %}
+
+<nav aria-label="...">
+
+  <ul class="pagination">
+    {% if objects.has_previous %}
+      <li class="page-item"><a class="page-link"
+                               href="?{% set_query_parameters page=1 %}">&laquo;</a>
+      </li>
+      <li class="page-item"><a class="page-link"
+                               href="?{% set_query_parameters page=objects.previous_page_number %}">&lsaquo;</a>
+      </li>
+      <li class="page-item"><a class="page-link" href="?{% set_query_parameters page=1 %}">1</a></li>
+
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+    {% endif %}
+
+    {% for i in objects.paginator.page_range %}
+      {% if i < objects.number and i >= objects.number|add:"-4" and i != objects.number and i != 1 %}
+        <li class="page-item"><a class="page-link"
+                                 href="?{% set_query_parameters page=i %}">{{ i }}</a></li>
+      {% elif i > objects.number and i <= objects.number|add:"4" and i != objects.number and i != objects.paginator.num_pages %}
+        <li class="page-item"><a class="page-link"
+                                 href="?{% set_query_parameters page=i %}">{{ i }}</a></li>
+      {% elif objects.number == i %}
+        <li class="page-item active"><a class="page-link"
+                                        href="?{% set_query_parameters page=i %}">{{ i }}</a>
+        </li>
+      {% endif %}
+    {% endfor %}
+    {% if objects.has_next %}
+      <li class="page-item"><a class="page-link"
+                               href="?{% set_query_parameters page=objects.paginator.num_pages %}">{{ objects.paginator.num_pages }}</a>
+      </li>
+
+      <li class="page-item"><a class="page-link"
+                               href="?{% set_query_parameters page=objects.next_page_number %}">&rsaquo;</a>
+      </li>
+      <li class="page-item"><a class="page-link"
+                               href="?{% set_query_parameters page=objects.paginator.num_pages %}">&raquo;</a>
+      </li>
+
+    {% else %}
+      <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+    {% endif %}
+  </ul>
+</nav>

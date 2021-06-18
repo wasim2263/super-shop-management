@@ -12,9 +12,15 @@ PRODUCT_UNIT_TYPES = (
 class Category(SoftDeletableModel, TimeStampedModel):
     name = models.CharField(max_length=255, unique=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Brand(SoftDeletableModel, TimeStampedModel):
     name = models.CharField(max_length=255, unique=True)
+
+    def __str__(self):
+        return self.name
 
 
 class Product(SoftDeletableModel, TimeStampedModel):
@@ -25,3 +31,11 @@ class Product(SoftDeletableModel, TimeStampedModel):
     unit_price = models.DecimalField(default=0.0, max_digits=8, decimal_places=2)
     unit_type = models.CharField(max_length=20, choices=PRODUCT_UNIT_TYPES)
     stock = models.DecimalField(default=0.0, max_digits=8, decimal_places=2)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['name']),
+        ]
+
+    def __str__(self):
+        return self.name
