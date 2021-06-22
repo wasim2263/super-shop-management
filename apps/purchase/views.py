@@ -33,14 +33,18 @@ class PurchaseView(LoginRequiredMixin, View):
         customer_form = CustomerForm(request.POST)
         customer = None
         if customer_form.is_valid():
+            # creating new customer if email and phone both are unique
             customer = customer_form.save()
         else:
+            # invalid form means there is existing data of this customer
             name = request.POST.get('name', None)
             phone = request.POST.get('phone', None)
             email = request.POST.get('email', None)
             if phone and email and name:
                 customers = Customer.objects.filter(Q(phone=phone) | Q(email=email))
                 customer = customers.last()
+                # if all data are provided and only one user exists then update the info or using last
+                # purchased information
                 if customer and customers.count() == 1:
                     customer.name = name
                     customer.phone = phone
@@ -49,11 +53,10 @@ class PurchaseView(LoginRequiredMixin, View):
 
         if not customer or len(purchase_list) == 0:
             return render(request, 'purchase/home.html', {'customer_form': customer_form})
-
         invoice = Invoice(customer=customer)
         invoice.save()
-
         purchase_list = json.loads(purchase_list)
+        # adding individual purchased product in the invoice
         for item in purchase_list:
             product = None
             if 'id' in item and 'quantity' in item:
@@ -65,7 +68,7 @@ class PurchaseView(LoginRequiredMixin, View):
                                     quantity=item['quantity'], unit_price=product.unit_price)
                 purchase.total_price = item['quantity'] * product.unit_price
                 purchase.save()
-                product.stock -= item['quantity']
+                product.stock -= item['quantity']  # decrementing stock as it's already soled out
                 product.save()
 
         return redirect('purchase:invoice', invoice.id)

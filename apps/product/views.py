@@ -14,22 +14,23 @@ from apps.product.models import Product
 
 class ProductListView(LoginRequiredMixin, View):
     def get(self, request):
-        context = {}
         products = Product.objects.filter()
         search_product = request.GET.get('product_name', "")
         if search_product != "":
             products = products.filter(name__icontains=search_product)
-        if request.is_ajax():
+        if request.is_ajax():  # using ajax search in home page
             product_list = products.values('id', 'name', 'stock', 'code', 'unit_price', 'unit_type')[:10]
             return JsonResponse({"product_count": len(product_list), 'products': list(product_list)}, status=200)
         pagination = Paginator(products, 30)
-        context['products'] = pagination.get_page(request.GET.get('page'))
-        return render(request, 'product/product-list.html', context)
+        context = {'products': pagination.get_page(request.GET.get('page'))}
+
+        return render(request, 'product/product-list.html', context=context)
 
 
 class ProductAddView(LoginRequiredMixin, View):
 
     def get(self, request, product_id):
+        # edit or create view
         if product_id is not None:
             product = get_object_or_404(Product, pk=product_id)
         else:
@@ -39,7 +40,8 @@ class ProductAddView(LoginRequiredMixin, View):
         return render(request, 'product/product-add.html', context=context)
 
     def post(self, request, product_id):
-        if product_id is not None:
+        # update or new create view
+        if product_id is not None: # product_id will be None as it's set in create url
             product = get_object_or_404(Product, pk=product_id)
         else:
             product = None

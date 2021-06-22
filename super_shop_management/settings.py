@@ -173,7 +173,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 # allauth settings
 SITE_ID = 1
-LOGIN_REDIRECT_URL = '/chat'
+LOGIN_REDIRECT_URL = '/'
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
