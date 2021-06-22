@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load i18n crispy_forms_tags %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4>Product</h4>
+                                <hr>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span>Category: {{ product.category }}</span>
+                                <br>
+                                <span>Name: {{ product.name }}</span>
+                                <br>
+                                <span>Code: {{ product.code }}</span>
+                                <br>
+                                <span>Unit Price: {{ product.unit_price }}</span>
+                                <br>
+                                <span>Stock: {{ product.stock }} {{ product.unit_type }}</span>
+                                <br>
+                                <span>Brand: {{ product.brand }}</span>
+                                <br>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

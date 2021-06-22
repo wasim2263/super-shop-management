@@ -78,7 +78,10 @@
                             <td>{{ producct.category }}</td>
                             <td>{{ producct.unit_price }} </td>
                             <td>{{ producct.stock }}{{ producct.unit_type }}</td>
-                            <td><a class="btn btn-primary" href="{% url 'product:product-edit' producct.id %}">Edit</a>
+                            <td>
+                                <a class="btn btn-primary" href="{% url 'product:product-edit' producct.id %}">Edit</a>
+                                <a class="btn btn-primary" href="{% url 'product:product-details' producct.id %}">View</a>
+                                <a class="btn btn-danger" href="{% url 'product:product-delete' producct.id %}">Delete</a>
                             </td>
                         </tr>
                     {% endfor %}
