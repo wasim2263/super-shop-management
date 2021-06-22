@@ -57,8 +57,9 @@
                     {% csrf_token %}
                     {{ customer_form|crispy }}
                     <div class="control-group">
+                        <br>
                         <div class="controls">
-                            <button type="submit" class="btn">Purchase</button>
+                            <button type="submit" class="btn btn-primary">Purchase</button>
                         </div>
                     </div>
                 </form>
@@ -76,9 +77,7 @@
             function showSingleProductTotal(e, value) {
                 let price = e.children('td.productPrice').text();
                 e.children('td.total-price').html((value * price).toFixed(2));
-
             }
-
             function enableEdit() {
                 $(".editable").click(function (event) {
                     if ($(this).children("input").length > 0)
@@ -130,13 +129,11 @@
                     });
                 });
             }
-
             function deleteTableRow() {
                 $("#purchaseList").on('click', '.remove-product', function () {
                     $(this).closest('tr').remove();
                 });
             }
-
             function addButtonClick() {
                 $(".product").on('click', function () {
                     let tbody = $('#purchaseList');
@@ -165,7 +162,6 @@
 
                 });
             }
-
             $('#productName').on("input", function () {
                 let tbody = $('#searchedList');
                 let productName = $(this).val();
@@ -195,7 +191,6 @@
                 })
             });
 
-
             $("#purchaseForm").submit(function (e) {
 
                 let purchase_list = []
@@ -217,7 +212,6 @@
                     .attr("value", JSON.stringify(purchase_list))
                     .appendTo("#purchaseForm");
             });
-
         });
     </script>
 
