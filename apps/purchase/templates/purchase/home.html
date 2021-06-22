@@ -1,18 +1,224 @@
 {% extends "base.html" %}
 {% load i18n crispy_forms_tags %}
 {% block extra_css %}
-{#    {{ find_tutor_form.media.css }}#}
+    <style>
+        .quantity-input {
+            width: 70px !important;
+        }
+    </style>
 {% endblock extra_css %}
 {% block content %}
-  <div class="row">
-    <div class="col-md-6">
+    <div class="row">
+        <div class="col-md-8 border-right">
+            <div class="row m-2">
+                <div class="col-md-6">
+                    <div class="input-group input-search">
+                        <input type="text" class="form-control" name="product_name" id="productName"
+                               value="{{ request.GET.product_name }}"
+                               placeholder="Search Product Name...">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <table class="table">
 
-      <div class="row">
-      </div>
+                        <tbody id="searchedList">
+
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+            <div class="row m-2">
+                <div class="col-md-12">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th scope="col">Item</th>
+                            <th scope="col">Unit Price</th>
+                            <th scope="col">QTY</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="purchaseList">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="border-left d-sm-none d-md-block" style="width: 0px;"></div>
+        <div class="col-md-4">
+            <div class="row m-2">
+                <h4>Customer Information</h4>
+                <hr>
+            </div>
+            <div class="row">
+                <form class="form-horizontal" method="post" action="" id="purchaseForm">
+                    {% csrf_token %}
+                    {{ customer_form|crispy }}
+                    <div class="control-group">
+                        <div class="controls">
+                            <button type="submit" class="btn">Purchase</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
-  </div>
+
 {% endblock content %}
 {% block extra_js %}
-{#    {{ find_tutor_form.media.js }}#}
+    <script type="text/javascript"
+            src="https://cdn.jsdelivr.net/gh/bbbootstrap/libraries@main/jquery.tabledit.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            function showSingleProductTotal(e, value) {
+                let price = e.children('td.productPrice').text();
+                e.children('td.total-price').html((value * price).toFixed(2));
+
+            }
+
+            function enableEdit() {
+                $(".editable").click(function (event) {
+                    if ($(this).children("input").length > 0)
+                        return false;
+
+                    let tdObj = $(this);
+                    let preText = tdObj.html();
+
+                    let inputObj = $("<input class='bg-secondary quantity-input'  type='number' />");
+
+
+                    tdObj.html("");
+                    let appended = false;
+
+                    inputObj.width(tdObj.width())
+                        .height(tdObj.height())
+                        .css({border: "0px", fontSize: "17px"})
+                        .val(preText)
+                        .appendTo(tdObj)
+                        .trigger("focus")
+                        .trigger("select");
+
+                    inputObj.keyup(function (event) {
+                        if (27 == event.which) {  // press ESC-key
+                            tdObj.html(preText);
+                        }
+                        if (Number($(this).val()) > Number(tdObj.data('stock'))) {
+                            if (tdObj.children('.alert-danger').length == 0) {
+                                tdObj.append("<span class='alert-danger'>Not enough stock</span>")
+                            }
+                            return;
+                        } else {
+                            tdObj.children('.alert-danger').remove();
+                        }
+                        if (13 == event.which && Number($(this).val()) <= Number(tdObj.data('stock'))) { // press ENTER-key
+                            let value = $(this).val();
+                            let input_type = tdObj.data('unit-type');
+                            if (input_type == 'piece') {
+                                value = parseInt(value);
+                            }
+                            tdObj.html(value);
+                            showSingleProductTotal(tdObj.closest('tr'), value)
+
+                        }
+                    });
+
+                    inputObj.click(function () {
+                        return false;
+                    });
+                });
+            }
+
+            function deleteTableRow() {
+                $("#purchaseList").on('click', '.remove-product', function () {
+                    $(this).closest('tr').remove();
+                });
+            }
+
+            function addButtonClick() {
+                $(".product").on('click', function () {
+                    let tbody = $('#purchaseList');
+                    let productId = $(this).data('product-id');
+                    let productName = $(this).data('product-name');
+                    let productStock = $(this).data('product-stock');
+                    let productPrice = $(this).data('product-price');
+                    let unitType = $(this).data('unit-type');
+                    let total = productPrice * 1;
+                    let trHTML = '<tr><td>' + productName + '</td><td class="productPrice">' + productPrice
+                        + '</td><td class="editable" data-product-id=' + productId + ' data-unit-type=' + unitType + ' data-stock=' + productStock
+                        + '>1</td><td class="total-price">' + total +
+                        '</td> <td> <button  class="btn btn-sm btn-primary remove-product">Remove</button> </td></tr>';
+                    let alreadyAdded = false
+                    $('#purchaseList tr').each(function () {
+                        let id = $(this).find('td.editable').data('product-id');
+                        if (id == productId) {
+                            alreadyAdded = true;
+                        }
+                    })
+                    if (!alreadyAdded) {
+                        tbody.append(trHTML);
+                        enableEdit();
+                        deleteTableRow();
+                    }
+
+                });
+            }
+
+            $('#productName').on("input", function () {
+                let tbody = $('#searchedList');
+                let productName = $(this).val();
+                let trHTML = '';
+                if (productName == "") {
+                    tbody.html(trHTML)
+                    return;
+                }
+                request_url = '/products/?product_name=' + productName;
+                console.log(request_url)
+                $.ajax({
+                    url: request_url,
+                    success: function (data) {
+                        let products = data.products;
+
+                        $.each(products, function (i, product) {
+                            console.log(i, product)
+                            let attributes = `data-product-id=${product.id} data-product-name="${product.name}" data-product-price=${product.unit_price} data-product-stock=${product.stock}  data-unit-type=${product.unit_type}`
+                            trHTML += '<tr><td>' + product.name + '(price:' + product.unit_price + ')</td><td> <button ' + attributes + ' class="btn btn-sm btn-primary product">Add</button> </td></tr>';
+                        });
+                        tbody.html(trHTML);
+                        addButtonClick();
+                    },
+                    errors: function (e) {
+                        alert(e);
+                    }
+                })
+            });
+
+
+            $("#purchaseForm").submit(function (e) {
+
+                let purchase_list = []
+                $('#purchaseList tr').each(function () {
+                    let id = $(this).find('td.editable').data('product-id');
+                    let quantity = Number($(this).find('td.editable').text());
+                    if (Number(quantity) > 0) {
+                        {#purchase_list.push({'id': id, 'quantity':quantity})#}
+                        purchase_list.push({'id': id, 'quantity': quantity})
+                        {#purchase_list.push(quantity)#}
+                    }
+                })
+                if (purchase_list.length == 0) {
+                    e.preventDefault();
+                    alert('No Item Added');
+                }
+                $("<input />").attr("type", "hidden")
+                    .attr("name", "purchase_list")
+                    .attr("value", JSON.stringify(purchase_list))
+                    .appendTo("#purchaseForm");
+            });
+
+        });
+    </script>
 
 {% endblock extra_js %}

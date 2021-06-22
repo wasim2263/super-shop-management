@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
-{#{% load staticfiles %}#}
-
+{% load i18n crispy_forms_tags %}
 {% block content %}
     <div class="container">
         <div class="row">
@@ -9,7 +8,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <h4>Update Profile</h4>
+                                <h4>Product</h4>
                                 <hr>
                             </div>
                         </div>
@@ -17,8 +16,9 @@
                             <div class="col-md-12">
                                 <form class="form-horizontal" method="post" action="">
                                     {% csrf_token %}
-                                    {{ form.as_p }}
+                                    {{ form|crispy }}
                                     <div class="control-group">
+                                        <hr>
                                         <div class="controls">
                                             <button type="submit" class="btn">Update</button>
                                         </div>

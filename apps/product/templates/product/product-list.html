@@ -42,7 +42,8 @@
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
-<a class="btn btn-primary" href="{% url 'product:product-add' %}">Add New Product</a>
+                                    <a class="btn btn-primary" href="{% url 'product:product-add' %}">Add New
+                                        Product</a>
                                 </div>
                             </div>
                         </form>
@@ -75,8 +76,8 @@
                             <td>{{ producct.code }}</td>
                             <td>{{ producct.name }}</td>
                             <td>{{ producct.category }}</td>
-                            <td>{{ producct.unite_price }} {{ producct.unit_type }}</td>
-                            <td>{{ producct.stock }}</td>
+                            <td>{{ producct.unit_price }} </td>
+                            <td>{{ producct.stock }}{{ producct.unit_type }}</td>
                             <td><a class="btn btn-primary" href="{% url 'product:product-edit' producct.id %}">Edit</a>
                             </td>
                         </tr>

@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 
 # Create your views here.
@@ -18,9 +19,11 @@ class ProductListView(LoginRequiredMixin, View):
         search_product = request.GET.get('product_name', "")
         if search_product != "":
             products = products.filter(name__icontains=search_product)
+        if request.is_ajax():
+            product_list = products.values('id', 'name', 'stock', 'code', 'unit_price', 'unit_type')[:10]
+            return JsonResponse({"product_count": len(product_list), 'products': list(product_list)}, status=200)
         pagination = Paginator(products, 30)
         context['products'] = pagination.get_page(request.GET.get('page'))
-
         return render(request, 'product/product-list.html', context)
 
 

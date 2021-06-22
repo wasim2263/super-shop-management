@@ -9,6 +9,9 @@ from apps.product.models import Product
 class Invoice(SoftDeletableModel, TimeStampedModel):
     customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
 
+    def __str__(self):
+        return f"invoice:{self.id}-{self.customer}"
+
 
 class Purchase(SoftDeletableModel, TimeStampedModel):
     invoice = models.ForeignKey(Invoice, null=True, on_delete=models.SET_NULL)

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block extra_css %}
+{% endblock extra_css %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-8 border-right">
+            <div class="row m-2" id="invoice">
+                <div class="col-md-12">
+                    {{ customer_info_qr_code|safe }}
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th class="text-center" scope="col">SL No</th>
+                            <th class="text-center" scope="col">Item</th>
+                            <th class="text-center" scope="col">Unit Price</th>
+                            <th class="text-center" scope="col">QTY</th>
+                            <th class="text-center" scope="col">Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in invoice.purchase_set.all %}
+                            <tr>
+                                <td class="text-center">{{ forloop.counter }}</td>
+                                <td>{{ item.product.name }}</td>
+                                <td class="text-center">{{ item.unit_price }}</td>
+                                <td class="text-center">{{ item.quantity }}</td>
+                                <td class="text-center">{{ item.total_price }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="4">Amount in words: {{ total_amount_in_words }} taka only</td>
+                            <td class="text-center">{{ total_amount }}</td>
+                        </tr>
+                        </tfoot>
+
+                    </table>
+                </div>
+            </div>
+        <div class="row m-2 pull-right">
+            <button id="printInvoice" class="btn btn-primary ">Print Invoice</button>
+        </div>
+        </div>
+
+    </div>
+
+{% endblock content %}
+{% block extra_js %}
+<script type="text/JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.print/1.6.0/jQuery.print.js"></script>
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#printInvoice").click(function () {
+                $("#invoice").print();
+            });
+        });
+    </script>
+
+{% endblock extra_js %}
